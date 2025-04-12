@@ -14,7 +14,7 @@ from .auth import refresh_access_token
 from .const import DOMAIN
 from .webhook import BticinoX8000WebhookHandler
 
-PLATFORMS = [Platform.CLIMATE]
+PLATFORMS: list[Platform] = [Platform.CLIMATE]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,9 +69,7 @@ async def async_setup_entry(
         await webhook_handler.async_register_webhook()
     hass.config_entries.async_update_entry(config_entry, data=data)
     _LOGGER.debug("selected_thermostats: %s", data["selected_thermostats"])
-    hass.async_add_job(
-        hass.config_entries.async_forward_entry_setup(config_entry, "climate")
-    )
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     return True
 
 
